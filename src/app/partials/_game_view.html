@@ -1,0 +1,21 @@
+<div id="player_list_ingame_container">
+  <ul>
+    <li ng-repeat="player in players" id="{{ player.device_id }}" class="player_list_item" ng-class="{ready: player.is_ready, not_ready: !player.is_ready}">
+      <div class="player_character">
+        <img ng-src="assets/screen/{{getCharacterImage(player)}}">
+      </div>
+      <div class="player_current_activator" ng-class="{low_opacity: (player.state !== 'alive')}" ng-style="{'background-image': 'url(' + player.current_type + ')'}">
+        <img src="/assets/screen/border.png">
+        <div class="activator_amount">x<span class="value">{{ player.current_game.activator_amount }}</span></div>
+      </div>
+      <div class="player_score">{{ player.score }}</div>
+    </li>
+  </ul>
+</div>
+
+<div id="game_view" ng-init="init()"></div>
+
+<div id="preloader_container">
+  <img src="/assets/screen/loading.png" class="loading_text">
+  <div id="preloader_text_container"></div>
+</div>

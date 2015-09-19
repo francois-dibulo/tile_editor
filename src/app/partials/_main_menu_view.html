@@ -1,0 +1,25 @@
+<div id="title_view">
+
+  <img src="assets/screen/logo_300.png" alt="Tic Tac Boom" id="logo" ng-click="toggleMuteSound()">
+
+  <h2 id="title_state" ng-switch="current_state">
+    <span ng-switch-when="waiting_more_players">
+      Waiting for more players to join!
+    </span>
+    <span ng-switch-when="start_game">
+      Press <span class="animate_flicker_fast">START</span> to play!
+    </span>
+    <span ng-switch-default>
+      Waiting for players to connect ...
+    </span>
+  </h2>
+
+  <p class="mode_title">MODE: {{ current_mode.name }}</p>
+
+  <ng-include src="'src/app/partials/_player_list.html'"></ng-include>
+
+  <p class="text_center n_dream_label">
+    N-Dream AG
+  </p>
+
+</div>

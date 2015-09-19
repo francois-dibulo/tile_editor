@@ -1,0 +1,25 @@
+<div>
+  <h2 id="title_state">ROUND OVER</h2>
+  <table class="score_table">
+    <tr class="score_header">
+      <td class="score_td">PLAYER</td>
+      <td class="score_td">TROPHIES</td>
+      <td class="score_td">ROUND SCORE</td>
+    </tr>
+    <tr ng-repeat="player in players | orderBy:'-score'" class="score_row">
+      <td class="score_td score_td_player">
+        <img ng-src="assets/screen/{{getCharacterImage(player, 'body_profile_player_00')}}" class="score_player_img">
+      </td>
+      <td class="score_td score_td_trophies">
+        <ul class="score_td_trophies_list">
+            <li class="score_td_trophies_list_item" ng-repeat="i in getMaxTrophies() track by $index">
+              <img ng-src="/assets/screen/player_00{{ player.assets_number - 1}}_trophy.png" ng-class="{trophy_to_win: ($index + 1 > player.trophies_count)}">
+            </li>
+        </ul>
+      </td>
+      <td class="score_td score_td_score">
+        {{ player.score }}
+      </td>
+    </tr>
+  </table>
+</div>

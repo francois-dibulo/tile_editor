@@ -1,0 +1,599 @@
+html, body {
+  margin : 0;
+  padding : 0;
+  overflow : hidden;
+  height: 100%;
+  width: 100%;
+  font-size: 16px;
+  font-family: 'Play', sans-serif;
+  background-color: #F6F6F6;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+h3 {
+  margin: 0;
+}
+
+.left {
+  left: 0;
+}
+
+.right {
+  right: 0;
+}
+
+.hide {
+  display: none;
+}
+
+.view {
+  display: none;
+}
+
+.text_top {
+  position: absolute;
+  top: 12%;
+  text-align: center;
+  width: 100%;
+  font-size: 28px;
+}
+
+.text_middle {
+  position: absolute;
+  top: 45%;
+  text-align: center;
+  width: 100%;
+  font-size: 28px;
+}
+
+.text_bottom {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  bottom: 12%;
+  font-size: 28px;
+}
+
+
+/*
+  INTERFACE BUTTONS
+*/
+
+.button_round_outer {
+/*  position: absolute;
+  width: 150px;
+  height: 150px;
+  background-color: #4f4f4f;
+  box-shadow: 0px 0px 6px #111111;
+  border: 1px solid black;
+  border-radius: 100%;
+  text-align: center;
+  overflow: hidden;
+  margin-top: -12%;
+  margin-left: -75px;*/
+
+  position: absolute;
+  width: 125px;
+  height: 125px;
+  background-color: #4f4f4f;
+  box-shadow: 0px 0px 6px #111111;
+  border: 1px solid black;
+  border-radius: 100%;
+  text-align: center;
+  overflow: hidden;
+  margin-top: -9%;
+  margin-left: -60px;
+}
+
+.button_round_outer:active, .button_round_outer:focus {
+  background-color: #7E7E7E;
+}
+
+.button_round_inner {
+  width: 80%;
+  height: 80%;
+  position: relative;
+  top: 8%;
+  left: 8%;
+  background-color: rgb(30, 30, 30);
+  border: 4px solid #29ABE2;
+  border-radius: 100%;
+  color: #FFFFFF;
+  font-size: 116%;
+}
+
+.button_round_inner_blue {
+  border: 4px solid #29ABE2;
+}
+
+.button_round_inner_green {
+  border: 4px solid #ADDE00;
+}
+
+.button_round_inner_red {
+  border: 4px solid #ED3853;
+}
+
+.button_center {
+  top: 50%;
+  left: 50%;
+}
+
+.button_left {
+  top: 50%;
+  left: 20%;
+}
+
+.button_right {
+  top: 50%;
+  left: 80%;
+}
+
+/*
+  START VIEW
+*/
+
+#start_container {
+  height: 100%;
+}
+
+.player_avatar {
+  width: 88px;
+  height: 108px;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+#start_container .player_avatar {
+  position: absolute;
+  left: 20%;
+  top: 50%;
+  margin-top: -32px;
+}
+
+.option_container {
+  width: 41%;
+  top: 10%;
+  margin: auto;
+  position: relative;
+  height: 14%;
+}
+
+.option_container_button {
+  position: absolute;
+  width: 20%;
+  padding: 10px;
+  font-size: 20px;
+  background: #4f4f4f;
+  color: #29ABE2;
+  border: 4px solid #424242;
+  border-radius: 7px;
+}
+
+.mode_prev_button {
+  left: 0;
+}
+
+.mode_next_button {
+  right: 0;
+}
+
+.option_container_text {
+  padding-top: 2%;
+  font-size: 30px;
+  text-align: center;
+}
+
+/*
+  INTRO VIEW
+*/
+
+#intro_container {
+  height: 100%;
+}
+
+.start_intro_character {
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: center center;
+  width: 100%;
+  height: 100%;
+}
+
+.button_goto_menu {
+  left: auto;
+  top: 60%;
+  right: 2%;
+  width: 17%;
+  height: 30%;
+  margin: -8% 0 0 0;
+}
+
+.button_goto_menu .button_round_inner {
+  top: 7%;
+  left: 7%;
+}
+
+.start_intro_character .text_bottom {
+  bottom: 2%;
+}
+
+.start_intro_character .text_top {
+  color: #FFFFFF;
+  font-size: 19px;
+  margin-top: 5px;
+}
+
+.start_intro_character .text_bottom {
+  font-size: 19px;
+}
+
+.player_character_name {
+  position: absolute;
+  right: 2%;
+  top: 12%;
+  font-size: 27px;
+  color: #FFF;
+  text-transform: uppercase;
+}
+
+/*
+  LOADING VIEW
+*/
+#loading_game_container .player_avatar {
+  position: absolute;
+  left: 50%;
+  top: 20%;
+  margin-top: -32px;
+  margin-left: -40px;
+}
+
+/*
+  WIN / LOSE VIEW
+*/
+.win_text {
+  font-size: 50px;
+  color: #000000;
+}
+
+.lose_text {
+  margin-top: -20px;
+}
+
+.player_body {
+  position: absolute;
+  left: 50%;
+  margin-left: -96px;
+  bottom: 0;
+  width: 192px;
+  height: 192px;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  background-size: 70%;
+}
+
+/*
+  ACTIVATOR BUTTON
+*/
+#buttons_container {
+  position: absolute;
+  left: 250px;
+  top: 150px;
+  text-align: center;
+  height: 150px;
+  width: 250px;
+  overflow: hidden;
+}
+
+#button_a {
+  position: absolute;
+  height: 50%;
+  width: 100%;
+  top: 50%;
+  right: 0px;
+  text-align: center;
+}
+
+.button_a_img {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  margin-top: -32px;
+  margin-left: -32px;
+  width: 64px;
+  height: 64px;
+  pointer-events: none;
+  background-repeat: no-repeat;
+}
+
+/*
+  ACTIVATOR LIST
+*/
+.action_buttons_container {
+  height: 100%;
+  width: 52%;
+  position: absolute;
+  right: 0px;
+  overflow: hidden;
+}
+
+
+.activator_list_container {
+  position: absolute;
+  height: 50%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.activator_list_item {
+  display: inline-block;
+  margin: 0 1px 0 0;
+  width: 32.9%;
+  height: 100%;
+  cursor: pointer;
+  text-align: center;
+}
+
+.activator_container .activator_list_item_img {
+  pointer-events: none;
+  position: relative;
+  top: 50%;
+  width: 64px;
+  height: 64px;
+  left: 50%;
+  margin: -32px 0 0 -32px;
+  text-align: center;
+}
+
+.activator_list_item_img.inactive {
+  opacity: 0.3;
+}
+
+/**
+ *  SWITCH GAME CONTAINER
+ */
+
+.activator_switch_container .activator_list_item {
+  width: 49.5%;
+  background: url('/src/airconsole-controls/button/button-150-300.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+}
+
+.activator_switch_label {
+  position: relative;
+  top: 50%;
+  text-align: center;
+  margin-top: -0.5em;
+  color: #29ABE2;
+}
+
+/**
+ *  WHEEL GAME CONTAINER
+ */
+.activator_wheel_container #buttons_container {
+  position: absolute;
+  left: 54%;
+  top: 58%;
+  text-align: center;
+  height: 251%;
+  width: 99%;
+  overflow: hidden;
+}
+
+.activator_wheel_container #button_a {
+  position: absolute;
+  height: 150%;
+  width: 195%;
+  border-radius: 100%;
+  background-color: #1E1E1E;
+  top: 39%;
+  left: 15%;
+  border: 5px solid #29ABE2;
+  box-shadow: -3px -3px 7px #000000;
+}
+
+.activator_wheel_container #button_a:active, .activator_wheel_container #button_a:focus {
+  background-color: #29ABE2;
+}
+
+.activator_wheel_container #button_a.single {
+  height: 100%;
+  width: 100%;
+  border-radius: 0;
+  top: 0%;
+  left: 0%;
+  border: 0px;
+  box-shadow: none;
+}
+
+.activator_wheel_container #button_a .button_a_img {
+  border: 0;
+  position: relative;
+  left: 27%;
+  top: 25%;
+  width: 64px;
+  height: 64px;
+  background-position: 0 0;
+  background-repeat: no-repeat;
+}
+
+.activator_wheel_container #button_a.single .button_a_img {
+  left: 50%;
+  top: 50%;
+}
+
+.activator_wheel_container .activator_list_item_img {
+  pointer-events: none;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 64px;
+  height: 64px;
+  margin: 0;
+  text-align: center;
+  border: 9px solid #454545;
+  border-radius: 100%;
+}
+
+.activator_wheel_container .activator_list_container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  left: -50%;
+  top: 0%;
+  -webkit-transform: rotate(-45deg);
+  -ms-transform-origin: 50% 0%; /* IE 9 */
+  -webkit-transform-origin: 50% 0%; /* Chrome, Safari, Opera */
+  transform-origin: 50% 0%;
+}
+
+.activator_wheel_container .activator_list_item {
+  position: relative;
+  display: inline-block;
+  height: 100%;
+  width: 33%;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.activator_wheel_container .activator_list_item_amount {
+  position: relative;
+}
+
+.activator_wheel_container .activator_list_item:nth-child(1) .activator_list_item_amount {
+  top: 76%;
+  left: 22%;
+}
+
+.activator_wheel_container .activator_list_item:nth-child(2) .activator_list_item_amount {
+  top: 66%;
+}
+
+.activator_wheel_container .activator_list_item:nth-child(3) .activator_list_item_amount {
+  top: 81%;
+  left: -13%;
+}
+
+/*
+  INGAME MENU
+*/
+.ingame_container_switch_button {
+  cursor: pointer;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  padding: 5px;
+}
+
+#ingame_menu {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  color: #FFFFFF;
+}
+
+#ingame_menu .list {
+  margin-top: 7%;
+  height: 90%;
+}
+
+#ingame_menu .list li {
+  text-align: center;
+  cursor: pointer;
+  padding: 2% 0 0 0;
+  margin: 1% 0;
+  height: 12%;
+  box-sizing: border-box;
+}
+
+/*
+  DPAD CSS
+*/
+
+#dpad, .arrow_container  {
+  position: absolute;
+  width: 37%;
+  height: 100%;
+  left: 1%;
+  top: 0%;
+  background-image: url(/assets/controller/dpad_background.png);
+}
+
+.arrow_container {
+  top: 20% !important;
+  height: 64% !important;
+}
+
+.arrow_container .dpad-relative {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 10px;
+  bottom: 10px;
+}
+
+.button-300-150 {
+  position: absolute;
+  height: 50%;
+  width: 40%;
+  right: 0px;
+}
+
+.button-150-300 {
+  background: url('/src/airconsole-controls/button/button-150-300.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+}
+
+.button-80 {
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  left: 50%;
+  margin-left: -25%;
+  font-size: 10px;
+}
+
+.button-80 .button-text {
+  margin-top: -0.6em;
+}
+
+.middle-group {
+  position: absolute;
+  width: 13%;
+  left: 36%;
+  top: 75%;
+}
+
+.middle-group-square {
+  position: absolute;
+  height: 0%;
+  width: 100%;
+  padding-bottom: 100%;
+  left: 0px;
+  top: 0px;
+}
+
+#start {
+  bottom: 0%;
+  background-image: url(/assets/controller/menu_button_inactive.png);
+}
+
+#start:focus, #start:active {
+  background-image: url(/assets/controller/menu_button_active.png);
+}

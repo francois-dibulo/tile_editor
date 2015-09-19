@@ -1,0 +1,14 @@
+<div id="player_list_container">
+  <ul>
+    <li ng-repeat="player in players | orderBy:'number'" id="{{ player.device_id }}" class="player_list_item">
+      <div class="state_title" ng-if="!player.is_ready">
+        Connecting
+      </div>
+      <div class="state_title" ng-if="player.is_ready">
+        <span class="player_name" style="color: {{player.color}}">Player {{player.number}}</span>
+      </div>
+      <div class="player_image" ng-style="{'background-position': getAvatarPosition(player.assets_number) }" ng-class="{ready: player.is_ready, not_ready: !player.is_ready}"></div>
+      <div class="player_character_name">{{ player.character_name }}</div>
+    </li>
+  </ul>
+</div>

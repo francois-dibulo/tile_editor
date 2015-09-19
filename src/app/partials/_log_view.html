@@ -1,0 +1,18 @@
+<div class="view" ng-controller="LogCtrl" ng-init="init()" ng-click="toggleFullScreen()">
+
+  <div class="box_grey">
+    <div class="left">
+      <div class="gold_brick_sprite" ng-style="{'background-position': getAcPos()}"></div>
+    </div>
+    <div class="right">
+      DESTROYED:
+      <div class="counter">
+        {{ count_gb }}
+      </div>
+    </div>
+  </div>
+  <div id="logo"><img src="assets/screen/logo_300.png"></div>
+  <div>
+    <div ng-repeat="winner in gr_data | limitTo:quantity" class="last_destroyer" ng-style="{'background-image': 'url(assets/controller/character_info_00' + (winner.data.assets_number - 1) + '.png)'}"></div>
+  </div>
+</div>

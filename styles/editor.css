@@ -1,0 +1,16 @@
+body {
+  font-family: "Arial";
+  font-size: 0.8em;
+  margin: 0;
+  padding: 0;
+}
+
+.canvas_container {
+  margin: auto;
+  display: block;
+  margin-top: 4em;
+}
+
+canvas {
+  background-color: #111111;
+}

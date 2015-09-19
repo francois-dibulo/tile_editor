@@ -1,0 +1,31 @@
+<div class="view_container">
+
+  <div class="victory_screen_container">
+
+    <div class="text_center session_end_win_title_container">
+      <h2 class="session_end_win_title">CONGRATULATIONS!</h2>
+      Press START for revenge!
+    </div>
+
+    <div class="victory_screen_middle">
+      <ul class="session_end_winners_list">
+        <li class="session_winner_item" ng-repeat="player in getSessionWinners()">
+          Player {{ player.number }}<br><br>
+          <img ng-src="assets/screen/body_profile_player_00{{player.assets_number - 1}}_win.png">
+        </li>
+      </ul>
+
+      <ul class="session_end_winners_list_characters">
+        <li class="session_winner_character_item" ng-repeat="player in getSessionWinners()" ng-style="{'background-image': 'url(/assets/json/player_000{{player.assets_number - 1}}_idle_front.png)'}">
+        </li>
+      </ul>
+
+      <ul class="session_end_loser_list_characters">
+        <li class="session_winner_character_item" ng-repeat="player in getSessionLoser()" ng-style="{'background-image': getBackImage(player)}">
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+</div>
