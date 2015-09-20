@@ -1,7 +1,33 @@
 <div ng-init="init()">
 
-  <div class="canvas_container" ng-style="{width: width + 'px', height: height + 'px'}">
-    <canvas id="canvas" width="{{ width }}" height="{{ height }}"></canvas>
+  <div class="menu">
+    <p>
+      <button ng-click="togglePlay()">Toggle Play</button>
+    </p>
+    <p>
+      <button ng-click="setTool(Tool.Paint)">Add</button>
+      <button ng-click="setTool(Tool.Delete)">Remove</button>
+    </p>
+    <label>ROWS</label>
+    <input ng-model="rows" ng-change="changeSize(rows, cols)">
+    <label>COLS</label>
+    <input ng-model="cols" ng-change="changeSize(rows, cols)">
+    <label>TILE SIZE</label>
+    <input ng-model="tile_size" ng-change="changeTileSize(tile_size)">
+    <p>
+      Width: {{ width }}<br>
+      Height: {{ height }}
+    </p>
+    <ul>
+      <li ng-repeat="obj in game_objects" ng-click="selectEntity(obj)">{{ obj.class_name }}</li>
+    </ul>
   </div>
 
+  <div class="content">
+    <div id="canvas_container" ng-style="{width: width + 'px', height: height + 'px'}" ng-mousedown="onCanvasMousedown($event)" ng-mouseup="onCanvasMouseup($event)"></div>
+  </div>
+
+<div class="hidden">
+  {{ cells }}
+</div>
 </div>

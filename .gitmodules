@@ -1,0 +1,3 @@
+[submodule "src/game/airconsole-game-engine"]
+	path = src/game/airconsole-game-engine
+	url = git@github-ndream:AirConsole/airconsole-game-engine.git

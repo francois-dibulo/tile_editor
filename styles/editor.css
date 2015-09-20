@@ -5,12 +5,30 @@ body {
   padding: 0;
 }
 
-.canvas_container {
+.menu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  box-sizing: border-box;
+  padding: 20px;
+  background-color: #3498db;
+  color: #FFFFFF;
+}
+
+.content {
+}
+
+#canvas_container {
   margin: auto;
   display: block;
   margin-top: 4em;
 }
 
 canvas {
-  background-color: #111111;
+  background-color: #000000;
+}
+
+.hidden {
+  display: none;
 }
