@@ -12,10 +12,14 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
   //
   $scope.Tool = {
     Paint: 'paint',
-    Delete: 'delete'
+    Delete: 'delete',
+    Inspect: 'inspect',
+    SetWaypoint: 'set_waypoint'
   };
   $scope.current_tool = $scope.Tool.Paint;
   $scope.current_selected_entity = null;
+  $scope.current_inspect_cell = null;
+  $scope.current_inspect_entity = null;
   //
   var game = null;
   var grid = null;
@@ -29,6 +33,10 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
   };
 
   $scope.setTool = function(tool) {
+    if (tool === $scope.Tool.Paint || tool === $scope.Tool.Remove) {
+      $scope.current_inspect_cell = null;
+      $scope.current_inspect_entity = null;
+    }
     $scope.current_tool = tool;
   };
 
@@ -74,21 +82,24 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
       },
       {
         class_name: 'EndTile',
+        is_unique: true,
         opts: {
           shape_data: {
             type: Graphic.Type.Rect,
             fill_color: 0x2ecc71
           }
-        },
-        is_unique: true
+        }
       },
       {
-        class_name: 'MoveTile',
+        class_name: 'MoveWaypointTile',
         opts: {
           shape_data: {
             type: Graphic.Type.Rect,
             fill_color: 0xe74c3c
           }
+        },
+        tools: {
+          set_waypoint: true
         }
       }
     ];
@@ -107,6 +118,7 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
         $scope.cells[c][r] = [];
       }
     }
+    game.prebuildCells($scope.cols, $scope.rows);
   };
 
   var scaleCanvas = function() {
@@ -169,13 +181,23 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
   var addEntityToCells = function(entity) {
     var col = entity.col;
     var row = entity.row;
-    $scope.cells[col][row].push({
-      class_name: entity.type
-    });
+    $scope.cells[col][row].push(entity);
+  };
+
+  var getNormPoint = function(point) {
+    var cell = pointToCell(point);
+    return {
+      x: cell.col * $scope.tile_size,
+      y: cell.row * $scope.tile_size
+    };
   };
 
   $scope.selectEntity = function(entity) {
-    $scope.current_selected_entity = entity;
+    if ($scope.current_tool === $scope.Tool.Paint) {
+      $scope.current_selected_entity = entity;
+    } else if ($scope.current_tool === $scope.Tool.Inspect) {
+      $scope.current_inspect_entity = entity;
+    }
   };
 
   $scope.createEntity = function(point) {
@@ -208,8 +230,20 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     //
     var entity = new window[obj.class_name](obj.opts);
     entity.createSprite();
+
+    // Trigger on-remove-event
+    var move_signal = entity.getSignal('moved');
+    if (move_signal) {
+      move_signal.add(function() {
+        game.swapTile(entity);
+      }, this);
+    }
     game.addEntity(entity);
-    game.world.render();
+    if (!game.is_running) {
+      game.world.render();
+    } else {
+      entity.ready();
+    }
     addEntityToCells(entity);
   };
 
@@ -222,6 +256,13 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     } else if ($scope.current_tool === $scope.Tool.Delete) {
       var cell = pointToCell(point);
       clearCell(cell.col, cell.row);
+    } else if ($scope.current_tool === $scope.Tool.Inspect) {
+      $scope.current_inspect_entity = null;
+      var cell = pointToCell(point);
+      $scope.current_inspect_cell = $scope.cells[cell.col][cell.row];
+    } else if ($scope.current_tool === $scope.Tool.SetWaypoint) {
+      var norm_point = getNormPoint(point);
+      $scope.current_inspect_entity.addWaypoint(norm_point);
     }
   };
 
@@ -249,7 +290,7 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     $scope.canvas_ele = angular.element(document.getElementById('canvas'));
     //
     var world = new World('canvas_container', $scope.width, $scope.height);
-    game = new Game(world);
+    game = new TileGame(world);
 
     grid = new Grid($scope.cols, $scope.rows, $scope.tile_size);
     world.addContainer(grid.getContainer());

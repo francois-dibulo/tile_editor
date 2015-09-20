@@ -7,6 +7,7 @@
     <p>
       <button ng-click="setTool(Tool.Paint)">Add</button>
       <button ng-click="setTool(Tool.Delete)">Remove</button>
+      <button ng-click="setTool(Tool.Inspect)">Inspect</button>
     </p>
     <label>ROWS</label>
     <input ng-model="rows" ng-change="changeSize(rows, cols)">
@@ -18,8 +19,22 @@
       Width: {{ width }}<br>
       Height: {{ height }}
     </p>
-    <ul>
+    <ul ng-show="current_tool == Tool.Paint">
       <li ng-repeat="obj in game_objects" ng-click="selectEntity(obj)">{{ obj.class_name }}</li>
+    </ul>
+
+    <ul ng-show="(current_tool == Tool.Inspect || current_tool == Tool.SetWaypoint) && current_inspect_cell">
+      <li ng-repeat="obj in current_inspect_cell" ng-click="selectEntity(obj)">{{ obj.type }}</li>
+    </ul>
+
+    <ul ng-show="current_inspect_entity !== null">
+      <li><button ng-click="setTool(Tool.SetWaypoint)">Set Waypoints</button></li>
+      <ul>
+        <li ng-repeat="wp in current_inspect_entity.waypoint_queue">
+          [{{wp.x}}, {{wp.y}}]<br>
+          <input type="text" ng-model="wp.wait" ng-value="wp.wait" style="width: 30px;">
+        </li>
+      </ul>
     </ul>
   </div>
 
@@ -28,6 +43,6 @@
   </div>
 
 <div class="hidden">
-  {{ cells }}
+
 </div>
 </div>
