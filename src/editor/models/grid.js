@@ -16,6 +16,14 @@ Grid.prototype.clear = function() {
   return this.container.removeChildren();
 };
 
+Grid.prototype.hide = function() {
+  this.getContainer().visible = false;
+};
+
+Grid.prototype.show = function() {
+  this.getContainer().visible = true;
+};
+
 Grid.prototype.createLines = function(rows, cols, size) {
   rows = rows || this.rows;
   cols = cols || this.cols;

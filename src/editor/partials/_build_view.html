@@ -3,6 +3,7 @@
   <div class="menu">
     <p>
       <button ng-click="togglePlay()">Toggle Play</button>
+      <button ng-click="resetEntities()">Reset</button>
     </p>
     <p>
       <button ng-click="setTool(Tool.Paint)">Add</button>
@@ -29,6 +30,7 @@
 
     <ul ng-show="current_inspect_entity !== null">
       <li><button ng-click="setTool(Tool.SetWaypoint)">Set Waypoints</button></li>
+      <li><button ng-click="resetWaypoints(current_inspect_entity)">Reset Waypoints</button></li>
       <ul>
         <li ng-repeat="wp in current_inspect_entity.waypoint_queue">
           [{{wp.x}}, {{wp.y}}]<br>

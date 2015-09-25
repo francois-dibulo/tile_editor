@@ -1,11 +1,11 @@
-var TileGame = function(world) {
+var PixiTileGame = function(world) {
   Game.apply(this, arguments);
   this.cells = [];
 };
 
-TileGame.prototype = new Game();
+PixiTileGame.prototype = new PixiGame();
 
-TileGame.prototype.prebuildCells = function(cols, rows) {
+PixiTileGame.prototype.prebuildCells = function(cols, rows) {
   this.cells = [];
   for (var c = 0; c < cols; c++) {
     this.cells[c] = [];
@@ -15,23 +15,23 @@ TileGame.prototype.prebuildCells = function(cols, rows) {
   }
 };
 
-TileGame.prototype.addTileToCell = function(col, row, tile) {
+PixiTileGame.prototype.addTileToCell = function(col, row, tile) {
   this.cells[col][row].push(tile);
 };
 
-TileGame.prototype.removeTileFromCell = function(col, row, tile) {
+PixiTileGame.prototype.removeTileFromCell = function(col, row, tile) {
   var tile_index = this.findTileInCell(col, row, tile);
   if (tile_index !== null) {
     this.cells[col][row].splice(tile_index, 1);
   }
 };
 
-TileGame.prototype.swapTile = function(tile) {
+PixiTileGame.prototype.swapTile = function(tile) {
   this.removeTileFromCell(tile.last_cell.col, tile.last_cell.row, tile);
   this.addTileToCell(tile.col, tile.row, tile);
 };
 
-TileGame.prototype.findTileInCell = function(col, row, tile) {
+PixiTileGame.prototype.findTileInCell = function(col, row, tile) {
   var tiles = this.cells[col][row];
   var result = null;
   for (var i = 0; i < tiles.length; i++) {
@@ -45,6 +45,6 @@ TileGame.prototype.findTileInCell = function(col, row, tile) {
   return result;
 };
 
-TileGame.prototype.isEmptyCell = function(col, row) {
+PixiTileGame.prototype.isEmptyCell = function(col, row) {
   return this.cells[col][row].length === 0;
 };
