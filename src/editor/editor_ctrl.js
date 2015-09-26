@@ -23,11 +23,18 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
   //
   var game = null;
   var render_layer_0 = null;
+  var render_layer_floor = null;
   var render_layer_1 = null;
+  var render_layer_top = null;
   var grid = null;
 
   var render = function() {
     game.render_engine.render();
+  };
+
+  var clearTopLayer = function() {
+    render_layer_top.clear();
+    render();
   };
 
   $scope.togglePlay = function() {
@@ -45,6 +52,7 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     if (tool === $scope.Tool.Paint || tool === $scope.Tool.Remove) {
       $scope.current_inspect_cell = null;
       $scope.current_inspect_entity = null;
+      clearTopLayer();
     }
     $scope.current_tool = tool;
   };
@@ -211,11 +219,31 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     };
   };
 
+  var renderWaypoints = function(entity) {
+    clearTopLayer();
+    var waypoints = entity.waypoint_queue;
+    if (!waypoints.length) return;
+    var w = $scope.tile_size / 2;
+    var h = $scope.tile_size / 2;
+    var graphic = new PIXI.Graphics();
+    graphic.lineStyle(1, 0x00FF00, 1);
+    for (var i = 0; i < waypoints.length; i++) {
+      var prev = i === 0 ? 0 : i - 1;
+      graphic.moveTo(waypoints[prev].x + w, waypoints[prev].y + h);
+      graphic.lineTo(waypoints[i].x + w, waypoints[i].y + h);
+      graphic.drawCircle(waypoints[i].x + w, waypoints[i].y + h, 5);
+    }
+    render_layer_top.addGraphic(graphic);
+    render();
+  };
+
   $scope.selectEntity = function(entity) {
+    clearTopLayer();
     if ($scope.current_tool === $scope.Tool.Paint) {
       $scope.current_selected_entity = entity;
     } else if ($scope.current_tool === $scope.Tool.Inspect) {
       $scope.current_inspect_entity = entity;
+      renderWaypoints(entity);
     }
   };
 
@@ -229,6 +257,8 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     var x = cell.col * $scope.tile_size;
     var y = cell.row * $scope.tile_size;
     var cell_entities = $scope.cells[col][row];
+
+    var render_layer = class_name === "FloorTile" ? render_layer_floor : render_layer_1;
     // Entity that are unique can not be multiple times on a cell
     if (obj.is_unique && cellHasTile(col, row, class_name)) {
       return;
@@ -252,13 +282,13 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     var entity = new window[obj.class_name](obj.opts);
     entity.createGraphic();
 
-    render_layer_1.addGraphic(entity.graphic.getGraphicObj());
+    render_layer.addGraphic(entity.graphic.getGraphicObj());
     // Trigger on-remove-event
     entity.on('moved', function() {
       game.swapTile(entity);
     }, this);
 
-    game.addEntity(render_layer_1, entity);
+    game.addEntity(render_layer, entity);
 
     if (!game.is_running) {
       render();
@@ -278,9 +308,11 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
       var cell = pointToCell(point);
       clearCell(cell.col, cell.row);
     } else if ($scope.current_tool === $scope.Tool.Inspect) {
+      clearTopLayer();
       $scope.current_inspect_entity = null;
       var cell = pointToCell(point);
       $scope.current_inspect_cell = $scope.cells[cell.col][cell.row];
+    // Set a waypoint
     } else if ($scope.current_tool === $scope.Tool.SetWaypoint) {
       var norm_point = getNormPoint(point);
       var entity = $scope.current_inspect_entity;
@@ -291,6 +323,7 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
         });
       }
       entity.addWaypoint(norm_point);
+      renderWaypoints(entity);
     }
   };
 
@@ -319,7 +352,9 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     //
     game = new PixiTileGame('canvas_container', $scope.width, $scope.height);
     render_layer_0 = game.addRenderLayer();
+    render_layer_floor = game.addRenderLayer();
     render_layer_1 = game.addRenderLayer();
+    render_layer_top = game.addRenderLayer();
     game.render_engine.addLayersToMainStage();
 
     grid = new Grid($scope.cols, $scope.rows, $scope.tile_size);
@@ -333,6 +368,8 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
   $scope.resetWaypoints = function(entity) {
     entity.clearWaypoints();
     entity.reset();
+    render_layer_top.clear();
+    render();
   };
 
 }]);

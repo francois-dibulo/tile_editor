@@ -1,6 +1,6 @@
 var EndTile = function(options) {
   options = options || {};
-  TileEntity.apply(this, arguments);
+  FloorTile.apply(this, arguments);
   this.type = 'EndTile';
 };
 
