@@ -1,6 +1,6 @@
 var MoveWaypointTile = function(options) {
   options = options || {};
-  this.move_type = MoveWaypointTile.MoveType.Yoyo;
+  this.move_type = MoveWaypointTile.MoveType.Once;
   this.col = 0;
   this.row = 0;
   TileEntity.apply(this, arguments);
@@ -21,7 +21,9 @@ var MoveWaypointTile = function(options) {
 
 MoveWaypointTile.MoveType = {
   Once: 'once',
-  Yoyo: 'yoyo'
+  Loop: 'loop',
+  Yoyo: 'yoyo',
+  Circular: 'circular'
 };
 
 MoveWaypointTile.prototype = new TileEntity();
@@ -101,6 +103,26 @@ MoveWaypointTile.prototype.workNextWaypoint = function() {
     }
   }
 
+  // Circular
+  if (this.move_type === MoveWaypointTile.MoveType.Circular) {
+    if (next_index <= last_index) {
+      this.current_wp_index = next_index;
+    } else {
+      this.current_wp_index = 0;
+      var first_wp = this.waypoint_queue[0];
+      this.setTilePosition(this.init_cell.row, this.init_cell.col, true);
+    }
+  }
+
+  // Loop
+  if (this.move_type === MoveWaypointTile.MoveType.Loop) {
+    if (next_index <= last_index) {
+      this.current_wp_index = next_index;
+    } else {
+      this.current_wp_index = 0;
+    }
+  }
+
   // Once
   if (this.move_type === MoveWaypointTile.MoveType.Once) {
     if (next_index <= last_index) {
@@ -123,7 +145,6 @@ MoveWaypointTile.prototype.updateTilePosition = function() {
   var x = this.position.x;
   var y = this.position.y;
 
-//  console.log(current_sprite_x, x, this.width)
   if (current_sprite_x > x + this.size.width - this.move_offset) {
     this.setTilePosition(this.row, this.col + 1);
   } else if (current_sprite_x < x - this.move_offset) {

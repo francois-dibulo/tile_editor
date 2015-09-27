@@ -14,12 +14,16 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     Paint: 'paint',
     Delete: 'delete',
     Inspect: 'inspect',
-    SetWaypoint: 'set_waypoint'
+    SetWaypoint: 'set_waypoint',
+    SelectOtherObject: 'select_other_object'
   };
   $scope.current_tool = $scope.Tool.Paint;
   $scope.current_selected_entity = null;
   $scope.current_inspect_cell = null;
   $scope.current_inspect_entity = null;
+  $scope.after_select_object_fn = null;
+  //
+  $scope.onTriggerEvents = Entity.Event;
   //
   var game = null;
   var render_layer_0 = null;
@@ -51,7 +55,10 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
   $scope.setTool = function(tool) {
     if (tool === $scope.Tool.Paint || tool === $scope.Tool.Remove) {
       $scope.current_inspect_cell = null;
-      $scope.current_inspect_entity = null;
+      if ($scope.current_inspect_entity) {
+        $scope.current_inspect_entity.active_trigger = null;
+        $scope.current_inspect_entity = null;
+      }
       clearTopLayer();
     }
     $scope.current_tool = tool;
@@ -169,7 +176,7 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
   var getPointOnCanvas = function(e) {
     var c = game.render_engine.container_ele.getBoundingClientRect();
     var x = e.pageX - c.left;
-    var y = e.pageY - c.top;
+    var y = e.pageY - c.top - window.scrollY;
     return {
       x: x,
       y: y
@@ -280,6 +287,8 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     obj.opts.col = col;
     //
     var entity = new window[obj.class_name](obj.opts);
+    entity.trigger_events = [];
+    entity.active_trigger = null;
     entity.createGraphic();
 
     render_layer.addGraphic(entity.graphic.getGraphicObj());
@@ -324,6 +333,9 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
       }
       entity.addWaypoint(norm_point);
       renderWaypoints(entity);
+    } else if ($scope.current_tool === $scope.Tool.SelectOtherObject) {
+      var cell = pointToCell(point);
+      $scope.selected_cell = $scope.cells[cell.col][cell.row];
     }
   };
 
@@ -365,11 +377,67 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     initGameObjects();
   };
 
+  $scope.move_types = MoveWaypointTile.MoveType;
+
+  $scope.setWaypointType = function(type) {
+    $scope.current_inspect_entity.move_type = MoveWaypointTile.MoveType[type];
+  };
+
+  $scope.removeWaypoint = function(index) {
+    $scope.current_inspect_entity.waypoint_queue.splice(index, 1);
+    renderWaypoints($scope.current_inspect_entity);
+  };
+
+  $scope.copyWaypoints = function(object) {
+    if (!object.waypoint_queue) return;
+    var copy_wps = _.clone(object.waypoint_queue, true);
+    $scope.current_inspect_entity.waypoint_queue = copy_wps;
+    var e = $scope.current_inspect_entity;
+    $scope.current_inspect_entity.waypoint_queue.unshift({
+      x: e.position.x,
+      y: e.position.y,
+      wait: copy_wps[0].wait
+    });
+    $scope.current_inspect_entity.move_type = object.move_type;
+    renderWaypoints($scope.current_inspect_entity);
+  };
+
   $scope.resetWaypoints = function(entity) {
     entity.clearWaypoints();
     entity.reset();
     render_layer_top.clear();
     render();
+  };
+
+  $scope.createTriggerEvent = function(entity) {
+    var trigger = {
+      object: null,
+      trigger_event: null,
+      action: null
+    };
+    entity.trigger_events.push(trigger);
+  };
+
+  $scope.setActiveTrigger = function(entity, trigger) {
+    entity.active_trigger = trigger;
+  };
+
+  $scope.setTriggerEvent = function(entity, event_key) {
+    if (!entity.active_trigger) return;
+    entity.active_trigger.trigger_event = event_key;
+  };
+
+  $scope.selectOtherObject = function(fn) {
+    $scope.after_select_object_fn = $scope[fn];
+    $scope.setTool($scope.Tool.SelectOtherObject);
+  };
+
+  $scope.selectObject = function(entity) {
+    if ($scope.after_select_object_fn) {
+      $scope.after_select_object_fn(entity);
+    }
+    $scope.after_select_object_fn = null;
+    $scope.setTool($scope.Tool.Inspect);
   };
 
 }]);

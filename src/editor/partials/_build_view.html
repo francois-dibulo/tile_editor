@@ -29,15 +29,46 @@
     </ul>
 
     <ul ng-show="current_inspect_entity !== null">
-      <li><button ng-click="setTool(Tool.SetWaypoint)">Set Waypoints</button></li>
-      <li><button ng-click="resetWaypoints(current_inspect_entity)">Reset Waypoints</button></li>
+      <button ng-click="createTriggerEvent(current_inspect_entity)">Add trigger</button>
+
       <ul>
-        <li ng-repeat="wp in current_inspect_entity.waypoint_queue">
-          [{{wp.x}}, {{wp.y}}]<br>
-          <input type="text" ng-model="wp.wait" ng-value="wp.wait" style="width: 30px;">
-        </li>
+        <li ng-repeat="trigger in current_inspect_entity.trigger_events" ng-click="setActiveTrigger(current_inspect_entity, trigger)">Trigger</li>
       </ul>
+
+      <div ng-show="current_inspect_entity.active_trigger">
+        <ul>
+          <li ng-repeat="(key, val) in onTriggerEvents" ng-click="setTriggerEvent(current_inspect_entity, key)">{{ key }}</li>
+        </ul>
+
+        <div ng-show="current_inspect_entity.active_trigger && current_inspect_entity.active_trigger.trigger_event">
+          <li><button ng-click="selectOtherObject('copyWaypoints')">Copy Waypoints</button></li>
+          <li><button ng-click="setTool(Tool.SetWaypoint)">Set Waypoints</button></li>
+          <li><button ng-click="resetWaypoints(current_inspect_entity)">Reset Waypoints</button></li>
+          <div ng-show="current_inspect_entity.waypoint_queue">
+            <ul>
+              <li ng-repeat="(key, val) in move_types" ng-click="setWaypointType(key)">{{ val }}</li>
+            </ul>
+            Speed-x:
+            <input type="text" ng-value="current_inspect_entity.vel.x" ng-model="current_inspect_entity.vel.x">
+            Speed-y:
+            <input type="text" ng-value="current_inspect_entity.vel.y" ng-model="current_inspect_entity.vel.y">
+            <ul>
+              <li ng-repeat="wp in current_inspect_entity.waypoint_queue">
+                [{{wp.x}}, {{wp.y}}]<br>
+                <input type="text" ng-model="wp.wait" ng-value="wp.wait" style="width: 30px;">
+                <button ng-click="removeWaypoint($index)">X</button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </ul>
+
+    <div ng-show="current_tool == Tool.SelectOtherObject">
+      <ul>
+        <li ng-repeat="entity in selected_cell" ng-click="selectObject(entity)">{{ entity.type }}</li>
+      </ul>
+    </div>
   </div>
 
   <div class="content">
