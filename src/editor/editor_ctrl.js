@@ -32,6 +32,7 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
   var render_layer_top = null;
   var grid = null;
 
+  //
   var render = function() {
     game.render_engine.render();
   };
@@ -53,7 +54,7 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
   };
 
   $scope.setTool = function(tool) {
-    if (tool === $scope.Tool.Paint || tool === $scope.Tool.Remove) {
+    if (tool === $scope.Tool.Paint || tool === $scope.Tool.Delete) {
       $scope.current_inspect_cell = null;
       if ($scope.current_inspect_entity) {
         $scope.current_inspect_entity.active_trigger = null;
@@ -77,8 +78,8 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
       {
         class_name: 'WallTile',
         opts: {
-          graphic_data: {
-            type: Graphic.Type.Rect,
+          graphics: {
+            type: PixiGraphic.Type.Rectangle,
             fill_color: 0x34495e
           }
         },
@@ -87,8 +88,8 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
       {
         class_name: 'FloorTile',
         opts: {
-          graphic_data: {
-            type: Graphic.Type.Rect,
+          graphics: {
+            type: PixiGraphic.Type.Rectangle,
             fill_color: 0xecf0f1
           }
         },
@@ -97,8 +98,8 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
       {
         class_name: 'SpawnTile',
         opts: {
-          graphic_data: {
-            type: Graphic.Type.Rect,
+          graphics: {
+            type: PixiGraphic.Type.Rectangle,
             fill_color: 0x16a085
           }
         },
@@ -108,17 +109,17 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
         class_name: 'EndTile',
         is_unique: true,
         opts: {
-          graphic_data: {
-            type: Graphic.Type.Rect,
+          graphics: {
+            type: PixiGraphic.Type.Rectangle,
             fill_color: 0x2ecc71
           }
         }
       },
       {
-        class_name: 'MoveWaypointTile',
+        class_name: 'EnemyTile',
         opts: {
-          graphic_data: {
-            type: Graphic.Type.Rect,
+          graphics: {
+            type: PixiGraphic.Type.Rectangle,
             fill_color: 0xe74c3c
           }
         },
@@ -292,12 +293,17 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     entity.createGraphic();
 
     render_layer.addGraphic(entity.graphic.getGraphicObj());
+
     // Trigger on-remove-event
     entity.on('moved', function() {
       game.swapTile(entity);
+      if (game.is_running) {
+        game.checkCollision(entity);
+      }
     }, this);
 
-    game.addEntity(render_layer, entity);
+    game.addEntity(render_layer, [entity]);
+    game.addTileToCell(col, row, entity);
 
     if (!game.is_running) {
       render();
@@ -336,6 +342,10 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     } else if ($scope.current_tool === $scope.Tool.SelectOtherObject) {
       var cell = pointToCell(point);
       $scope.selected_cell = $scope.cells[cell.col][cell.row];
+      var entity = $scope.selected_cell[0];
+      if (entity) {
+        $scope.selectObject(entity);
+      }
     }
   };
 
@@ -377,6 +387,89 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     initGameObjects();
   };
 
+  $scope.trigger_conditions = Condition.Trigger;
+  $scope.trigger_actions = Condition.Action;
+
+  $scope.createTrigger = function(entity) {
+    var trigger = {
+      conditions: [],
+      actions: []
+    };
+    entity.trigger_conditions.push(trigger);
+    $scope.setActiveTrigger(entity, trigger);
+  };
+
+  $scope.setActiveTrigger = function(entity, trigger) {
+    entity.active_trigger = trigger;
+  };
+
+  $scope.removeTriggerByIndex = function(index) {
+    var entity = $scope.current_inspect_entity;
+    entity.trigger_conditions.splice(index, 1);
+    entity.active_trigger = null;
+    $scope.current_inspect_entity.active_trigger = null;
+  };
+
+  $scope.createTriggerCondition = function(condition_key) {
+    var index = $scope.current_inspect_entity.active_trigger.conditions.length;
+    $scope.current_inspect_entity.active_trigger.conditions.push({
+      labels: { main: $scope.trigger_conditions[condition_key].label },
+      class_name: condition_key
+    });
+    $scope.selectConditionByIndex(index);
+  };
+
+  $scope.createTriggerAction = function(key) {
+    var index = $scope.current_inspect_entity.active_trigger.actions.length;
+    $scope.current_inspect_entity.active_trigger.actions.push({
+      labels: { main: $scope.trigger_actions[key].label },
+      class_name: key
+    });
+    $scope.selectActionByIndex(index);
+  };
+
+  $scope.selectConditionByIndex = function(index) {
+    $scope.current_inspect_entity.active_trigger.active_condition_index = index;
+  };
+
+  $scope.selectActionByIndex = function(index) {
+    $scope.current_inspect_entity.active_trigger.active_action_index = index;
+  };
+
+  $scope.removeConditionByIndex = function(index) {
+    $scope.current_inspect_entity.active_trigger.conditions.splice(index, 1);
+  };
+
+  $scope.removeActionByIndex = function(index) {
+    $scope.current_inspect_entity.active_trigger.actions.splice(index, 1);
+  };
+
+  $scope.doneTriggerSet = function() {
+    console.log($scope.current_inspect_entity.active_trigger);
+    $scope.current_inspect_entity.active_trigger.active_action_index = null;
+    $scope.current_inspect_entity.active_trigger.active_condition_index = null;
+  };
+
+  $scope.getConditionLabel = function(condition) {
+    var label = "";
+    for (var l in condition.labels) {
+      label += condition.labels[l];
+    }
+    return label;
+  };
+
+  $scope.getActiveCondition = function() {
+    return $scope.current_inspect_entity.active_trigger.conditions[$scope.current_inspect_entity.active_trigger.active_condition_index];
+  };
+
+  $scope.getActiveAction = function() {
+    return $scope.current_inspect_entity.active_trigger.actions[$scope.current_inspect_entity.active_trigger.active_action_index];
+  };
+
+
+  /*
+    WAYPOINTS
+  */
   $scope.move_types = MoveWaypointTile.MoveType;
 
   $scope.setWaypointType = function(type) {
@@ -409,35 +502,21 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     render();
   };
 
-  $scope.createTriggerEvent = function(entity) {
-    var trigger = {
-      object: null,
-      trigger_event: null,
-      action: null
-    };
-    entity.trigger_events.push(trigger);
-  };
-
-  $scope.setActiveTrigger = function(entity, trigger) {
-    entity.active_trigger = trigger;
-  };
-
   $scope.setTriggerEvent = function(entity, event_key) {
     if (!entity.active_trigger) return;
     entity.active_trigger.trigger_event = event_key;
   };
 
-  $scope.selectOtherObject = function(fn) {
-    $scope.after_select_object_fn = $scope[fn];
+  $scope.selectOtherObject = function(scope, fn) {
+    $scope.after_select_object_fn = scope[fn];
     $scope.setTool($scope.Tool.SelectOtherObject);
   };
 
   $scope.selectObject = function(entity) {
     if ($scope.after_select_object_fn) {
-      $scope.after_select_object_fn(entity);
+      $scope.after_select_object_fn(entity, true);
     }
     $scope.after_select_object_fn = null;
     $scope.setTool($scope.Tool.Inspect);
   };
-
 }]);

@@ -1,0 +1,49 @@
+<div ng-controller="TimeTriggerCtrl">
+  <!-- SELECT TIME TRIGGER TYPE -->
+  <div class="btn-group" role="group">
+    <button type="button" class="btn btn-default" ng-click="setTimeTriggerType(TimeTriggerType.Exact)">Exact</button>
+    <button type="button" class="btn btn-default" ng-click="setTimeTriggerType(TimeTriggerType.Range)">Range</button>
+    <button type="button" class="btn btn-default" ng-click="setTimeTriggerType(TimeTriggerType.Random)">Random</button>
+  </div>
+  <!-- SELECT EXACT TIME -->
+  <div ng-show="getActiveCondition().trigger_type == TimeTriggerType.Exact">
+    <h5>At time (ms):</h5>
+    <div class="row form-group" ng-repeat="value in getActiveCondition().trigger_at track by $index">
+      <div class="col-md-9">
+        <input type="input" class="form-control" ng-model="getActiveCondition().trigger_at[$index]">
+      </div>
+      <div class="col-md-3">
+        <button class="btn btn-danger" ng-click="removeTriggerAt($index)">X</button>
+      </div>
+    </div>
+    <p>
+      <button class="btn btn-success" ng-click="addTriggerAt()">&plus; ADD</button>
+    </p>
+  </div>
+
+  <!-- Range -->
+  <div ng-show="getActiveCondition().trigger_type && getActiveCondition().trigger_type !== TimeTriggerType.Exact">
+    <div class="row form-group" ng-repeat="value in getActiveCondition().trigger_at track by $index">
+      <div class="col-md-2">
+      <span ng-if="$index % 2 === 0">From</span>
+      <span ng-if="$index % 2 !== 0">To</span>
+      </div>
+      <div class="col-md-7">
+        <input type="input" class="form-control" ng-model="getActiveCondition().trigger_at[$index]">
+      </div>
+      <div class="col-md-3">
+        <button ng-show="$index % 2 === 0" class="btn btn-danger" ng-click="removeTriggerAt($index)">X</button>
+      </div>
+    </div>
+    <p>
+      <button class="btn btn-success" ng-click="addTriggerAt()">&plus; ADD</button>
+    </p>
+  </div>
+
+  <div ng-show="getActiveCondition().trigger_type">
+    <p class="text-right">
+      <button class="btn btn-primary" ng-click="done()">Done</button>
+    </p>
+  </div>
+
+</div>

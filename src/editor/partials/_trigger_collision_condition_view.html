@@ -1,0 +1,27 @@
+<div ng-controller="CollisionTriggerCtrl">
+
+  <h5>Which object collides?</h5>
+  <button class="btn btn-info" ng-click="selectOtherObject('setObject1')">Other object</button>
+  <button class="btn btn-info" ng-click="setObject1(current_inspect_entity)">This object</button>
+
+  <div ng-show="(getActiveCondition().object_1 !== undefined)">
+    <h5>With?</h5>
+    <button class="btn btn-info" ng-click="selectOtherObject('setObject2')">Other object</button>
+    <button class="btn btn-info" ng-click="setObject2Type()">Type</button>
+    <button class="btn btn-info" ng-click="setObject2()">Cell</button>
+  </div>
+
+  <p class="alert alert-info" ng-show="show_info_select_object">
+    Select another object on the map
+  </p>
+
+  <!-- BY ENTITY TYPE -->
+  <div ng-show="is_entity_type" class="btn-group">
+    <h5>Which type?</h5>
+    <button class="btn btn-default" ng-repeat="obj in game_objects" ng-click="setEntityType(obj.class_name)">{{ obj.class_name }}</button>
+  </div>
+
+  <p ng-show="(getActiveCondition().object_2 || getActiveCondition().entity_type)" class="text-right">
+    <button class="btn btn-primary" ng-click="done()">Done</button>
+  </p>
+</div>

@@ -1,75 +1,186 @@
 <div ng-init="init()">
 
-  <div class="menu">
-    <p>
-      <button ng-click="togglePlay()">Toggle Play</button>
-      <button ng-click="resetEntities()">Reset</button>
-    </p>
-    <p>
-      <button ng-click="setTool(Tool.Paint)">Add</button>
-      <button ng-click="setTool(Tool.Delete)">Remove</button>
-      <button ng-click="setTool(Tool.Inspect)">Inspect</button>
-    </p>
-    <label>ROWS</label>
-    <input ng-model="rows" ng-change="changeSize(rows, cols)">
-    <label>COLS</label>
-    <input ng-model="cols" ng-change="changeSize(rows, cols)">
-    <label>TILE SIZE</label>
-    <input ng-model="tile_size" ng-change="changeTileSize(tile_size)">
-    <p>
-      Width: {{ width }}<br>
-      Height: {{ height }}
-    </p>
-    <ul ng-show="current_tool == Tool.Paint">
-      <li ng-repeat="obj in game_objects" ng-click="selectEntity(obj)">{{ obj.class_name }}</li>
-    </ul>
-
-    <ul ng-show="(current_tool == Tool.Inspect || current_tool == Tool.SetWaypoint) && current_inspect_cell">
-      <li ng-repeat="obj in current_inspect_cell" ng-click="selectEntity(obj)">{{ obj.type }}</li>
-    </ul>
-
-    <ul ng-show="current_inspect_entity !== null">
-      <button ng-click="createTriggerEvent(current_inspect_entity)">Add trigger</button>
-
-      <ul>
-        <li ng-repeat="trigger in current_inspect_entity.trigger_events" ng-click="setActiveTrigger(current_inspect_entity, trigger)">Trigger</li>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <ul class="nav navbar-nav">
+        <li><button class="btn btn-success" ng-click="togglePlay()">Toggle Play</button></li>
+        <li><button class="btn btn-warning" ng-click="resetEntities()">Reset</button></li>
       </ul>
+    </div>
+  </nav>
 
-      <div ng-show="current_inspect_entity.active_trigger">
-        <ul>
-          <li ng-repeat="(key, val) in onTriggerEvents" ng-click="setTriggerEvent(current_inspect_entity, key)">{{ key }}</li>
-        </ul>
+  <div class="menu container">
 
-        <div ng-show="current_inspect_entity.active_trigger && current_inspect_entity.active_trigger.trigger_event">
-          <li><button ng-click="selectOtherObject('copyWaypoints')">Copy Waypoints</button></li>
-          <li><button ng-click="setTool(Tool.SetWaypoint)">Set Waypoints</button></li>
-          <li><button ng-click="resetWaypoints(current_inspect_entity)">Reset Waypoints</button></li>
-          <div ng-show="current_inspect_entity.waypoint_queue">
-            <ul>
-              <li ng-repeat="(key, val) in move_types" ng-click="setWaypointType(key)">{{ val }}</li>
-            </ul>
-            Speed-x:
-            <input type="text" ng-value="current_inspect_entity.vel.x" ng-model="current_inspect_entity.vel.x">
-            Speed-y:
-            <input type="text" ng-value="current_inspect_entity.vel.y" ng-model="current_inspect_entity.vel.y">
-            <ul>
-              <li ng-repeat="wp in current_inspect_entity.waypoint_queue">
-                [{{wp.x}}, {{wp.y}}]<br>
-                <input type="text" ng-model="wp.wait" ng-value="wp.wait" style="width: 30px;">
-                <button ng-click="removeWaypoint($index)">X</button>
-              </li>
-            </ul>
+    <div class="row">
+      <div class="col-md-12 menu_world_group">
+        <h4>World ({{ width }} x {{ height }})</h4>
+        <div class="row">
+          <div class="col-md-4">
+            <label>ROWS</label>
+            <input class="form-control" ng-model="rows" ng-change="changeSize(rows, cols)">
+          </div>
+          <div class="col-md-4">
+            <label>COLS</label>
+            <input class="form-control" ng-model="cols" ng-change="changeSize(rows, cols)">
+          </div>
+          <div class="col-md-4">
+            <label>TILE SIZE</label>
+            <input class="form-control" ng-model="tile_size" ng-change="changeTileSize(tile_size)">
           </div>
         </div>
       </div>
-    </ul>
+    </div>
 
-    <div ng-show="current_tool == Tool.SelectOtherObject">
-      <ul>
-        <li ng-repeat="entity in selected_cell" ng-click="selectObject(entity)">{{ entity.type }}</li>
-      </ul>
+    <div class="row">
+      <div class="col-md-12 menu_tools_group text-center">
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-default" ng-click="setTool(Tool.Paint)">Add</button>
+          <button type="button" class="btn btn-default" ng-click="setTool(Tool.Delete)">Remove</button>
+          <button type="button" class="btn btn-default" ng-click="setTool(Tool.Inspect)">Inspect</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 menu_entities_group">
+
+        <!-- ADD TILE TO CELL -->
+        <ul ng-show="current_tool == Tool.Paint" class="list-group">
+          <li class="list-group-item" ng-repeat="obj in game_objects" ng-click="selectEntity(obj)">{{ obj.class_name }}</li>
+        </ul>
+
+        <!-- EMPTY CELL -->
+        <div class="alert alert-info" ng-show="current_tool == Tool.Delete">
+          <b>Click on a cell to empty it.</b>
+        </div>
+
+        <!-- INSPECT CELL - SHOW TILES IN CELL -->
+        <div class="alert alert-info" ng-show="current_inspect_cell === null && current_tool == Tool.Inspect">
+          <strong>Select a cell on the grid.</strong>
+        </div>
+
+        <div ng-show="current_inspect_cell !== null">
+
+          <h4>Tiles in cell</h4>
+
+          <div class="alert alert-warning" ng-show="!current_inspect_cell.length">
+            <strong>No tiles in this cell</strong>
+          </div>
+
+          <ul class="list-group" ng-show="(current_tool == Tool.Inspect || current_tool == Tool.SetWaypoint) && current_inspect_cell">
+            <li class="list-group-item" ng-repeat="obj in current_inspect_cell" ng-click="selectEntity(obj)">{{ obj.type }}</li>
+          </ul>
+
+          <!-- INSPECT SINGLE ENTITY -->
+          <div ng-show="current_inspect_entity !== null">
+
+            <div class="form-group">
+              <button class="btn btn-primary form-control" ng-click="createTrigger(current_inspect_entity)">Add trigger</button>
+            </div>
+
+            <div class="panel panel-default" ng-repeat="trigger in current_inspect_entity.trigger_conditions" ng-click="setActiveTrigger(current_inspect_entity, trigger)">
+              <div class="panel-heading">
+                Trigger {{$index + 1}}
+                <button class="btn btn-danger btn-xs" ng-click="removeTriggerByIndex($index)">X</button>
+              </div>
+
+              <!-- IS ACTIVE TRIGGER -->
+              <div class="panel-body" ng-show="current_inspect_entity.active_trigger === trigger">
+
+                  <!-- SELECT KIND OF TRIGGER -->
+                  <div ng-show="!current_inspect_entity.active_trigger.conditions.length">
+                    <h3>IF</h3>
+                    <ul class="no_margin">
+                      <li ng-repeat="(key, val) in trigger_conditions" ng-click="createTriggerCondition(key)">{{ val.label }}</li>
+                    </ul>
+                  </div>
+
+                  <!-- CONDITION SELECTED - SHOW OPTIONS -->
+                  <ul ng-show="current_inspect_entity.active_trigger.conditions.length" class="no_margin">
+                    <h4>IF:</h4>
+                    <li ng-repeat="condition in current_inspect_entity.active_trigger.conditions track by $index">
+                      <div ng-click="selectConditionByIndex($index)">
+                        <span class="label label-default">{{ getConditionLabel(condition) }}</span>
+                        <button class="btn btn-danger btn-xs" ng-click="removeConditionByIndex($index)">X</button>
+                      </div>
+                      <!-- SHOW SELECTED TRIGGER CONDITION OPTIONS -->
+                      <div ng-show="current_inspect_entity.active_trigger.active_condition_index !== null">
+                        <ng-include src="trigger_conditions[condition.class_name].template"></ng-include>
+                      </div>
+                    </li>
+                  </ul>
+
+                  <!-- THEN -->
+                  <div ng-show="!current_inspect_entity.active_trigger.actions.length">
+                    <h3>THEN:</h3>
+                    <ul class="no_margin">
+                      <li ng-repeat="(key, val) in trigger_actions" ng-click="createTriggerAction(key)">{{ val.label }}</li>
+                    </ul>
+                  </div>
+
+                  <ul class="no_margin" ng-show="current_inspect_entity.active_trigger.actions.length">
+                    <h4>THEN:</h4>
+                    <li ng-repeat="action in current_inspect_entity.active_trigger.actions track by $index">
+                      <div ng-click="selectActionByIndex($index)">
+                        <span class="label label-default">{{ getConditionLabel(action) }}</span>
+                        <button class="btn btn-danger btn-xs" ng-click="removeActionByIndex($index)">X</button>
+                      </div>
+                      <!-- SHOW SELECTED TRIGGER ACTION OPTIONS -->
+                      <div ng-show="current_inspect_entity.active_trigger.active_action_index !== null">
+                        <ng-include src="trigger_actions[action.class_name].template"></ng-include>
+                      </div>
+                    </li>
+                  </ul>
+
+              </div>
+            </div>
+
+
+
+            <!--  OLD
+            <div ng-show="current_inspect_entity.active_trigger">
+              <ul>
+                <li ng-repeat="(key, val) in onTriggerEvents" ng-click="setTriggerEvent(current_inspect_entity, key)">{{ key }}</li>
+              </ul>
+
+              <div ng-show="current_inspect_entity.active_trigger && current_inspect_entity.active_trigger.trigger_event">
+                <li><button class="btn btn-info" ng-click="selectOtherObject('copyWaypoints')">Copy Waypoints</button></li>
+                <li><button class="btn btn-info" ng-click="setTool(Tool.SetWaypoint)">Set Waypoints</button></li>
+                <li><button class="btn btn-info" ng-click="resetWaypoints(current_inspect_entity)">Reset Waypoints</button></li>
+                <div ng-show="current_inspect_entity.waypoint_queue">
+                  <ul>
+                    <li ng-repeat="(key, val) in move_types" ng-click="setWaypointType(key)">{{ val }}</li>
+                  </ul>
+                  Speed-x:
+                  <input class="form-control" type="text" ng-value="current_inspect_entity.vel.x" ng-model="current_inspect_entity.vel.x">
+                  Speed-y:
+                  <input class="form-control" type="text" ng-value="current_inspect_entity.vel.y" ng-model="current_inspect_entity.vel.y">
+                  <ul>
+                    <li ng-repeat="wp in current_inspect_entity.waypoint_queue">
+                      [{{wp.x}}, {{wp.y}}]<br>
+                      <input class="form-control" type="text" ng-model="wp.wait" ng-value="wp.wait" style="width: 30px;">
+                      <button ng-click="removeWaypoint($index)">X</button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div ng-show="current_tool == Tool.SelectOtherObject">
+          <ul>
+            <li ng-repeat="entity in selected_cell" ng-click="selectObject(entity)">{{ entity.type }}</li>
+          </ul>
+        </div>
+        -->
+      </div>
+    </div>
+
     </div>
   </div>
+
+</div>
 
   <div class="content">
     <div id="canvas_container" ng-style="{width: width + 'px', height: height + 'px'}" ng-mousedown="onCanvasMousedown($event)" ng-mouseup="onCanvasMouseup($event)"></div>

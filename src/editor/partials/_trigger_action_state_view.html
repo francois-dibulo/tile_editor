@@ -1,0 +1,15 @@
+<div ng-controller="StateActionCtrl">
+
+  <h5>Which object?</h5>
+  <button class="btn btn-info" ng-click="setActionObject()">Other object</button>
+  <button class="btn btn-info" ng-click="setActionObject(current_inspect_entity)">This object</button>
+
+  <div ng-show="getActiveAction().action_object" class="btn-group" role="group">
+    <h5>Set which state?</h5>
+    <button type="button" class="btn btn-default" ng-repeat="fn in action_functions" ng-click="addActionFunction(fn)" ng-class="{active: isFunctionSelected(fn)}">{{ fn }}</button>
+  </div>
+
+  <p ng-show="getActiveAction().action_fns && getActiveAction().action_fns.length" class="text-right">
+    <button class="btn btn-primary" ng-click="done()">Done</button>
+  </p>
+</div>

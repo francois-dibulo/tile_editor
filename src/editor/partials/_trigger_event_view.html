@@ -1,0 +1,16 @@
+<div ng-controller="StateActionCtrl">
+
+  <h5>Of which object?</h5>
+  <button class="btn btn-info" ng-click="setTriggerObject()">Other object</button>
+  <button class="btn btn-info" ng-click="setTriggerObject(current_inspect_entity)">This object</button>
+
+  <!-- SELECT EVENT STATE -->
+  <div ng-show="getActiveCondition().listener_object" class="btn-group" role="group">
+    <h5>Which event?</h5>
+    <button type="button" class="btn btn-default" ng-repeat="(key, val) in entity_events" ng-click="addEvent(key)" ng-class="{active: (getActiveCondition().evt === key)}">{{ key }}</button>
+  </div>
+
+  <p ng-show="getActiveCondition().evt" class="text-right">
+    <button class="btn btn-primary" ng-click="done()">Done</button>
+  </p>
+</div>

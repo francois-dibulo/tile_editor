@@ -16,7 +16,7 @@ var MoveWaypointTile = function(options) {
     y: 1
   };
   this.move_offset = this.size.width / 2;
-  this.on(Entity.Event.onLive, this.initQueue.bind(this));
+  this.on(Entity.Event.onCreate, this.initQueue.bind(this));
 };
 
 MoveWaypointTile.MoveType = {
@@ -35,21 +35,6 @@ MoveWaypointTile.prototype.reset = function() {
   this.current_wp_index = 0;
   this.target_index = 0;
   this.setTilePosition(this.init_cell.row, this.init_cell.col, true);
-};
-
-MoveWaypointTile.prototype.setTilePosition = function(row, col, set_sprite) {
-  this.last_cell = {
-    row: this.row,
-    col: this.col
-  };
-  this.row = row;
-  this.col = col;
-  this.position.x = this.col * this.size.width;
-  this.position.y = this.row * this.size.height;
-  if (set_sprite) {
-    this.graphic.setPosition(this.position.x, this.position.y);
-  }
-  this.emit('moved');
 };
 
 MoveWaypointTile.prototype.addWaypoint = function(point) {
@@ -144,7 +129,6 @@ MoveWaypointTile.prototype.updateTilePosition = function() {
   var current_sprite_y = current_sprite_pos.y;
   var x = this.position.x;
   var y = this.position.y;
-
   if (current_sprite_x > x + this.size.width - this.move_offset) {
     this.setTilePosition(this.row, this.col + 1);
   } else if (current_sprite_x < x - this.move_offset) {
@@ -157,7 +141,6 @@ MoveWaypointTile.prototype.updateTilePosition = function() {
 };
 
 MoveWaypointTile.prototype.move = function() {
-  this.updateTilePosition();
   var pos = this.graphic.position;
   var target = this.current_target_point;
   if (target) {
@@ -183,4 +166,5 @@ MoveWaypointTile.prototype.move = function() {
       this.graphic.setPosition(next_x, next_y);
     }
   }
+  this.updateTilePosition();
 };

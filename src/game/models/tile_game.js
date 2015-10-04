@@ -48,3 +48,17 @@ PixiTileGame.prototype.findTileInCell = function(col, row, tile) {
 PixiTileGame.prototype.isEmptyCell = function(col, row) {
   return this.cells[col][row].length === 0;
 };
+
+PixiTileGame.prototype.checkCollision = function(tile) {
+  var tiles_in_cell = this.cells[tile.col][tile.row];
+  for (var i = 0; i < tiles_in_cell.length; i++) {
+    var other_tile = tiles_in_cell[i];
+    if (tile.id !== other_tile.id) {
+      if (tile.canCollide() && other_tile.canCollide()) {
+        console.log(tile.col, tile.row, tiles_in_cell);
+        tile.hasCollideWith(other_tile);
+        other_tile.hasCollideWith(tile);
+      }
+    }
+  }
+};

@@ -4,6 +4,7 @@ var TileEntity = function(options) {
   this.row = 0;
   this.col = 0;
   this.is_walkable = true;
+  this.trigger_conditions = [];
   MoveEntity.apply(this, arguments);
   this.type = 'TileEntity';
   this.init_cell = {
