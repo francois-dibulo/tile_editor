@@ -82,8 +82,7 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
             type: PixiGraphic.Type.Rectangle,
             fill_color: 0x34495e
           }
-        },
-        is_unique: true
+        }
       },
       {
         class_name: 'FloorTile',
@@ -227,10 +226,10 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     };
   };
 
-  var renderWaypoints = function(entity) {
+  var renderWaypoints = function(waypoints) {
+    console.trace("PARAM", waypoints);
     clearTopLayer();
-    var waypoints = entity.waypoint_queue;
-    if (!waypoints.length) return;
+    if (!waypoints || !waypoints.length) { throw "No waypoints to draw" };
     var w = $scope.tile_size / 2;
     var h = $scope.tile_size / 2;
     var graphic = new PIXI.Graphics();
@@ -251,7 +250,7 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
       $scope.current_selected_entity = entity;
     } else if ($scope.current_tool === $scope.Tool.Inspect) {
       $scope.current_inspect_entity = entity;
-      renderWaypoints(entity);
+      //renderWaypoints(entity);
     }
   };
 
@@ -330,15 +329,7 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     // Set a waypoint
     } else if ($scope.current_tool === $scope.Tool.SetWaypoint) {
       var norm_point = getNormPoint(point);
-      var entity = $scope.current_inspect_entity;
-      if (entity.waypoint_queue.length === 0) {
-        entity.addWaypoint({
-          x: entity.position.x,
-          y: entity.position.y
-        });
-      }
-      entity.addWaypoint(norm_point);
-      renderWaypoints(entity);
+      $scope.setWaypoint(norm_point);
     } else if ($scope.current_tool === $scope.Tool.SelectOtherObject) {
       var cell = pointToCell(point);
       $scope.selected_cell = $scope.cells[cell.col][cell.row];
@@ -445,7 +436,6 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
   };
 
   $scope.doneTriggerSet = function() {
-    console.log($scope.current_inspect_entity.active_trigger);
     $scope.current_inspect_entity.active_trigger.active_action_index = null;
     $scope.current_inspect_entity.active_trigger.active_condition_index = null;
   };
@@ -472,9 +462,9 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
   */
   $scope.move_types = MoveWaypointTile.MoveType;
 
-  $scope.setWaypointType = function(type) {
-    $scope.current_inspect_entity.move_type = MoveWaypointTile.MoveType[type];
-  };
+  // $scope.setWaypointType = function(type) {
+  //   $scope.current_inspect_entity.move_type = MoveWaypointTile.MoveType[type];
+  // };
 
   $scope.removeWaypoint = function(index) {
     $scope.current_inspect_entity.waypoint_queue.splice(index, 1);
@@ -518,5 +508,16 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     }
     $scope.after_select_object_fn = null;
     $scope.setTool($scope.Tool.Inspect);
+  };
+
+  $scope.selectWaypointProxy = function(scope, fn) {
+    $scope.after_set_wp_fn = scope[fn];
+    $scope.setTool($scope.Tool.SetWaypoint);
+  };
+
+  $scope.setWaypoint = function(point) {
+    if ($scope.after_set_wp_fn) {
+      $scope.after_set_wp_fn(point, renderWaypoints);
+    }
   };
 }]);

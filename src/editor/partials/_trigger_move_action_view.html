@@ -1,0 +1,63 @@
+<div ng-controller="MoveTriggerCtrl">
+
+  <h5>Which object should move?</h5>
+  <button class="btn btn-info" ng-click="selectOtherObject('setActionObject')">Other object</button>
+  <button class="btn btn-info" ng-click="setActionObject(current_inspect_entity)">This object</button>
+
+  <div ng-show="getActiveAction().action_object" class="btn-group" role="group">
+    <h5>Move how?</h5>
+    <button type="button" class="btn btn-default" ng-repeat="fn in move_functions" ng-click="setMoveFunction(fn)" ng-class="{active: (getActiveAction().move_function === fn)}">{{ fn }}</button>
+  </div>
+
+  <p class="alert alert-info" ng-show="show_info_select_object">
+    Select another object on the map
+  </p>
+
+  <!-- WAYPOINTS -->
+  <div ng-show="getActiveAction().move_function === 'waypoints'">
+    <h5>Set waypoints</h5>
+    <h6>Select a move type:</h6>
+    <div class="btn-group">
+      <button class="btn btn-default btn-group-item" ng-repeat="(key, val) in move_types" ng-click="setWaypointType(key)" ng-class="{active: (getActiveAction().wp_move_type === key)}">{{ val }}</button>
+    </div>
+    <hr>
+    <div class="btn-group" ng-show="getActiveAction().wp_move_type">
+      <button class="btn btn-primary" ng-click="setWpTool('addWaypoint')">Set waypoints</button>
+      <button class="btn btn-warning">Reset</button>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <b>Point</b>
+      </div>
+      <div class="col-md-3">
+        <b>Wait</b>
+      </div>
+      <div class="col-md-3">
+        <b>Action</b>
+      </div>
+    </div>
+
+    <div class="row" ng-repeat="wp in (getActiveAction().waypoint_queue)">
+      <div class="col-md-6">
+        [{{wp.x}}, {{wp.y}}]
+      </div>
+      <div class="col-md-3">
+        <input class="form-control" type="text" ng-model="wp.wait" ng-value="wp.wait">
+      </div>
+      <div class="col-md-3">
+      <button class="btn btn-danger" ng-click="removeWaypoint($index)">X</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JUMP TO -->
+  <div ng-show="getActiveAction().move_function === 'jumpTo'">
+    Cell or tile
+  </div>
+
+  <p ng-show="getActiveAction().move_function" class="text-right">
+    <button class="btn btn-primary" ng-click="done()">Done</button>
+  </p>
+</div>

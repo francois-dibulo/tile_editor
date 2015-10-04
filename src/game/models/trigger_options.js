@@ -18,7 +18,8 @@ Condition.Action.ObjectState = {
 };
 
 Condition.Action.Move = {
-  label: 'Move'
+  label: 'Move',
+  template: 'src/editor/partials/_trigger_move_action_view.html'
 };
 
 // ===================================
