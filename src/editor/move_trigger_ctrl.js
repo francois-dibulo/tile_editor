@@ -72,4 +72,30 @@ GameEditor.controllers.controller('MoveTriggerCtrl', ['$scope', '$http', functio
     }
   };
 
+  $scope.removeWaypoint = function(index) {
+    var action = $scope.$parent.getActiveAction();
+    action.waypoint_queue.splice(index, 1);
+    $scope.$parent.renderWaypoints(action.waypoint_queue);
+  };
+
+  $scope.copyWaypoints = function(object) {
+    if (!object.waypoint_queue) return;
+    var copy_wps = _.clone(object.waypoint_queue, true);
+    $scope.current_inspect_entity.waypoint_queue = copy_wps;
+    var e = $scope.current_inspect_entity;
+    $scope.current_inspect_entity.waypoint_queue.unshift({
+      x: e.position.x,
+      y: e.position.y,
+      wait: copy_wps[0].wait
+    });
+    $scope.current_inspect_entity.move_type = object.move_type;
+    renderWaypoints($scope.current_inspect_entity);
+  };
+
+  $scope.resetWaypoints = function(entity) {
+    var action = $scope.$parent.getActiveAction();
+    action.waypoint_queue = [];
+    $scope.$parent.renderWaypoints(action.waypoint_queue);
+  };
+
 }]);

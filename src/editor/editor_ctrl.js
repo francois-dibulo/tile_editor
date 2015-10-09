@@ -228,9 +228,8 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
   };
 
   var renderWaypoints = function(waypoints) {
-    console.trace("PARAM", waypoints);
     clearTopLayer();
-    if (!waypoints || !waypoints.length) { throw "No waypoints to draw" };
+    if (!waypoints || !waypoints.length) { return; };
     var w = $scope.tile_size / 2;
     var h = $scope.tile_size / 2;
     var graphic = new PIXI.Graphics();
@@ -244,6 +243,7 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     render_layer_top.addGraphic(graphic);
     render();
   };
+  $scope.renderWaypoints = renderWaypoints;
 
   $scope.selectEntity = function(entity) {
     clearTopLayer();
@@ -466,39 +466,8 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
 
 
   /*
-    WAYPOINTS
+    Trigger
   */
-  $scope.move_types = MoveWaypointTile.MoveType;
-
-  // $scope.setWaypointType = function(type) {
-  //   $scope.current_inspect_entity.move_type = MoveWaypointTile.MoveType[type];
-  // };
-
-  $scope.removeWaypoint = function(index) {
-    $scope.current_inspect_entity.waypoint_queue.splice(index, 1);
-    renderWaypoints($scope.current_inspect_entity);
-  };
-
-  $scope.copyWaypoints = function(object) {
-    if (!object.waypoint_queue) return;
-    var copy_wps = _.clone(object.waypoint_queue, true);
-    $scope.current_inspect_entity.waypoint_queue = copy_wps;
-    var e = $scope.current_inspect_entity;
-    $scope.current_inspect_entity.waypoint_queue.unshift({
-      x: e.position.x,
-      y: e.position.y,
-      wait: copy_wps[0].wait
-    });
-    $scope.current_inspect_entity.move_type = object.move_type;
-    renderWaypoints($scope.current_inspect_entity);
-  };
-
-  $scope.resetWaypoints = function(entity) {
-    entity.clearWaypoints();
-    entity.reset();
-    render_layer_top.clear();
-    render();
-  };
 
   $scope.setTriggerEvent = function(entity, event_key) {
     if (!entity.active_trigger) return;
