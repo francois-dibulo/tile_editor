@@ -7,13 +7,9 @@
   <div ng-show="(getActiveCondition().object_1 !== undefined)">
     <h5>With?</h5>
     <button class="btn btn-info" ng-click="selectOtherObject('setObject2')">Other object</button>
-    <button class="btn btn-info" ng-click="setObject2Type()">Type</button>
-    <button class="btn btn-info" ng-click="setObject2()">Cell</button>
+    <button class="btn btn-info" ng-click="setObject2Type()" ng-class="{active: is_entity_type}">Type</button>
+    <button class="btn btn-info" ng-click="selectCell('setCollisionCell')" ng-class="{active: getActiveCondition().collision_cell}">Cell</button>
   </div>
-
-  <p class="alert alert-info" ng-show="show_info_select_object">
-    Select another object on the map
-  </p>
 
   <!-- BY ENTITY TYPE -->
   <div ng-show="is_entity_type" class="btn-group">
@@ -21,7 +17,21 @@
     <button class="btn btn-default" ng-repeat="obj in game_objects" ng-click="setEntityType(obj.class_name)">{{ obj.class_name }}</button>
   </div>
 
-  <p ng-show="(getActiveCondition().object_2 || getActiveCondition().entity_type)" class="text-right">
+  <!-- BY CELL -->
+  <div ng-show="getActiveCondition().collision_cell" class="btn-group">
+    <h5>With Cell:</h5>
+    [{{ getActiveCondition().collision_cell.col }}, {{ getActiveCondition().collision_cell.row }}]
+  </div>
+
+  <p class="alert alert-info" ng-show="show_info_select_object">
+    Select another object on the map
+  </p>
+
+  <p class="alert alert-info" ng-show="show_info_select_cell">
+    Select a cell on the map
+  </p>
+
+  <p ng-show="(getActiveCondition().object_2 || getActiveCondition().entity_type || getActiveCondition().collision_cell)" class="text-right">
     <button class="btn btn-primary" ng-click="done()">Done</button>
   </p>
 </div>

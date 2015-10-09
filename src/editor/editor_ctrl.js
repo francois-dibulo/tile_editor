@@ -15,7 +15,8 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     Delete: 'delete',
     Inspect: 'inspect',
     SetWaypoint: 'set_waypoint',
-    SelectOtherObject: 'select_other_object'
+    SelectOtherObject: 'select_other_object',
+    SelectCell: 'select_cell'
   };
   $scope.current_tool = $scope.Tool.Paint;
   $scope.current_selected_entity = null;
@@ -340,6 +341,10 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
       if (entity) {
         $scope.selectObject(entity);
       }
+    } else if ($scope.current_tool === $scope.Tool.SelectCell) {
+      var cell = pointToCell(point);
+      $scope.selected_cell = $scope.cells[cell.col][cell.row];
+      $scope.selectCell(cell, point);
     }
   };
 
@@ -503,6 +508,19 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
   $scope.selectOtherObject = function(scope, fn) {
     $scope.after_select_object_fn = scope[fn];
     $scope.setTool($scope.Tool.SelectOtherObject);
+  };
+
+  $scope.selectCellOnMap = function(scope, fn) {
+    $scope.after_select_object_fn = scope[fn];
+    $scope.setTool($scope.Tool.SelectCell);
+  };
+
+  $scope.selectCell = function(cell, point) {
+    if ($scope.after_select_object_fn) {
+      $scope.after_select_object_fn(cell, point, true);
+    }
+    $scope.after_select_object_fn = null;
+    $scope.setTool($scope.Tool.Inspect);
   };
 
   $scope.selectObject = function(entity) {
