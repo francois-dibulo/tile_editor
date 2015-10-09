@@ -23,7 +23,8 @@ MoveWaypointTile.MoveType = {
   Once: 'once',
   Loop: 'loop',
   Yoyo: 'yoyo',
-  Circular: 'circular'
+  Circular: 'circular',
+  JumpTo: 'jump'
 };
 
 MoveWaypointTile.prototype = new TileEntity();
@@ -141,9 +142,17 @@ MoveWaypointTile.prototype.updateTilePosition = function() {
 };
 
 MoveWaypointTile.prototype.move = function() {
+  var self = this;
   var pos = this.graphic_objects[0].position;
   var target = this.current_target_point;
-  if (target) {
+  // Type is jump to cell
+  if (target && this.move_type === MoveWaypointTile.MoveType.JumpTo) {
+    this.tick_fn = 'idle';
+    var wait = parseInt(target.wait, 10) || 0;
+    this.queue.add(function() {
+      self.setTilePosition(target.row, target.col, true);
+    }, wait);
+  } else if (target) {
     var next_x = pos.x;
     var next_y = pos.y;
     var x_dir = pos.x > target.x ? -1 : 1;
@@ -160,11 +169,11 @@ MoveWaypointTile.prototype.move = function() {
     }
     if (x_arrived && y_arrived) {
       this.tick_fn = 'idle';
-      var wait = parseInt(target.wait, 10) || 0
+      var wait = parseInt(target.wait, 10) || 0;
       this.queue.add('workNextWaypoint', wait);
     } else {
       this.callMethodOnGraphics('setPosition', next_x, next_y);
     }
+    this.updateTilePosition();
   }
-  this.updateTilePosition();
 };

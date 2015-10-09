@@ -4,19 +4,9 @@
   <button class="btn btn-info" ng-click="selectOtherObject('setActionObject')">Other object</button>
   <button class="btn btn-info" ng-click="setActionObject(current_inspect_entity)">This object</button>
 
-  <div ng-show="getActiveAction().action_object" class="btn-group" role="group">
-    <h5>Move how?</h5>
-    <button type="button" class="btn btn-default" ng-repeat="fn in move_functions" ng-click="setMoveFunction(fn)" ng-class="{active: (getActiveAction().move_function === fn)}">{{ fn }}</button>
-  </div>
-
-  <p class="alert alert-info" ng-show="show_info_select_object">
-    Select another object on the map
-  </p>
-
   <!-- WAYPOINTS -->
-  <div ng-show="getActiveAction().move_function === 'waypoints'">
-    <h5>Set waypoints</h5>
-    <h6>Select a move type:</h6>
+  <div ng-show="getActiveAction().action_object">
+    <h5>Select a move type:</h5>
     <div class="btn-group">
       <button class="btn btn-default btn-group-item" ng-repeat="(key, val) in move_types" ng-click="setWaypointType(key)" ng-class="{active: (getActiveAction().wp_move_type === key)}">{{ val }}</button>
     </div>
@@ -52,20 +42,15 @@
 
   </div>
 
-  <!-- JUMP TO -->
-  <div ng-show="getActiveAction().move_function === 'jumpTo'">
-    <button class="btn btn-info" ng-click="selectCell('setJumpToCell')">Select cell</button>
-    <p ng-show="getActiveAction().target_cell">
-      <b>To Cell:</b><br>
-      [{{ getActiveAction().target_cell.col }}, {{ getActiveAction().target_cell.row }}]
-    </p>
-  </div>
+  <p class="alert alert-info" ng-show="show_info_select_object">
+    Select another object on the map
+  </p>
 
   <p class="alert alert-info" ng-show="show_info_select_cell">
     Select a cell on the map
   </p>
 
-  <p ng-show="getActiveAction().move_function" class="text-right">
+  <p ng-show="getActiveAction().wp_move_type" class="text-right">
     <button class="btn btn-primary" ng-click="done()">Done</button>
   </p>
 </div>

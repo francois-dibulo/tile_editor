@@ -2,29 +2,20 @@ GameEditor.controllers.controller('MoveTriggerCtrl', ['$scope', '$http', functio
   $scope.done = $scope.$parent.doneTriggerSet;
   $scope.show_info_select_object = false;
   $scope.MoveType = MoveWaypointTile.MoveType;
-  $scope.move_functions = ['jumpTo', 'waypoints'];
   $scope.move_types = MoveWaypointTile.MoveType;
+
+  /*
+    action = {
+      action_object: null,
+      move_function: waypoints | jumpTo,
+      waypoint_queue: [],
+      wp_move_type: MoveWaypointTile.MoveType
+    }
+  */
 
   $scope.selectOtherObject = function(fn) {
     $scope.show_info_select_object = true;
     $scope.$parent.selectOtherObject($scope, fn);
-  };
-
-  $scope.selectCell = function(fn) {
-    $scope.show_info_select_cell = true;
-    $scope.$parent.selectCellOnMap($scope, fn);
-  };
-
-  $scope.setJumpToCell = function(cell, point, from_selection) {
-    $scope.show_info_select_cell = false;
-    var action = $scope.$parent.getActiveAction();
-    action.target_cell = {
-      row: cell.row,
-      col: cell.col,
-      x: point.x,
-      y: point.y
-    };
-    action.labels.to_cell = " cell [" + cell.col + "," + cell.row + "]";
   };
 
   $scope.setActionObject = function(entity, from_selection) {
@@ -38,34 +29,32 @@ GameEditor.controllers.controller('MoveTriggerCtrl', ['$scope', '$http', functio
     action.action_object = entity;
   };
 
-  $scope.setMoveFunction = function(fn) {
-    var action = $scope.$parent.getActiveAction();
-    action.move_function = fn;
-    action.labels.move_function = ' by ' + fn;
-    if (fn === 'waypoints') {
-      action.waypoint_queue = [];
-    }
-  };
-
   $scope.setWaypointType = function(type) {
     var action = $scope.$parent.getActiveAction();
-    action.wp_move_type = type;
+    action.wp_move_type = $scope.move_types[type];
+    action.waypoint_queue = [];
+    $scope.$parent.renderWaypoints([]);
   };
 
   $scope.setWpTool = function(fn) {
     $scope.$parent.selectWaypointProxy($scope, fn);
   };
 
-  $scope.addWaypoint = function(point, cb) {
+  $scope.addWaypoint = function(point, cell, cb) {
     var action = $scope.$parent.getActiveAction();
-    if (action.waypoint_queue.length === 0) {
+    if (action.waypoint_queue.length === 0 &&
+        action.wp_move_type !== $scope.move_types.JumpTo) {
       action.waypoint_queue.push({
         x: action.action_object.position.x,
         y: action.action_object.position.y,
-        wait: 0
+        wait: 0,
+        row: action.action_object.row,
+        col: action.action_object.col
       });
     }
     point.wait = 0;
+    point.col = cell.col;
+    point.row = cell.row;
     action.waypoint_queue.push(point);
     if (cb) {
       cb(action.waypoint_queue);

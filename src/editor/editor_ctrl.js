@@ -319,30 +319,27 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
   $scope.onCanvasMousedown = function(e) {
     if ($scope.is_drawing) return;
     var point = getPointOnCanvas(e);
+    var cell = pointToCell(point);
     if ($scope.current_tool === $scope.Tool.Paint) {
       $scope.is_drawing = true;
       $scope.createEntity(point);
     } else if ($scope.current_tool === $scope.Tool.Delete) {
-      var cell = pointToCell(point);
       clearCell(cell.col, cell.row);
     } else if ($scope.current_tool === $scope.Tool.Inspect) {
       clearTopLayer();
       $scope.current_inspect_entity = null;
-      var cell = pointToCell(point);
       $scope.current_inspect_cell = $scope.cells[cell.col][cell.row];
     // Set a waypoint
     } else if ($scope.current_tool === $scope.Tool.SetWaypoint) {
       var norm_point = getNormPoint(point);
-      $scope.setWaypoint(norm_point);
+      $scope.setWaypoint(norm_point, cell);
     } else if ($scope.current_tool === $scope.Tool.SelectOtherObject) {
-      var cell = pointToCell(point);
       $scope.selected_cell = $scope.cells[cell.col][cell.row];
       var entity = $scope.selected_cell[0];
       if (entity) {
         $scope.selectObject(entity);
       }
     } else if ($scope.current_tool === $scope.Tool.SelectCell) {
-      var cell = pointToCell(point);
       $scope.selected_cell = $scope.cells[cell.col][cell.row];
       $scope.selectCell(cell, point);
     }
@@ -505,9 +502,9 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     $scope.setTool($scope.Tool.SetWaypoint);
   };
 
-  $scope.setWaypoint = function(point) {
+  $scope.setWaypoint = function(point, cell) {
     if ($scope.after_set_wp_fn) {
-      $scope.after_set_wp_fn(point, renderWaypoints);
+      $scope.after_set_wp_fn(point, cell, renderWaypoints);
     }
   };
 }]);
