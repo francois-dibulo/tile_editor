@@ -2,7 +2,7 @@ GameEditor.controllers.controller('StateActionCtrl', ['$scope', '$http', functio
   $scope.done = $scope.$parent.doneTriggerSet;
   $scope.selectOtherObject = $scope.$parent.selectOtherObject;
   $scope.action_functions = ['hide', 'show', 'remove', 'create', 'setInactive'];
-  $scope.entity_events = Entity.Event;
+  $scope.entity_events = GE.Entity.Event;
 
   $scope.addEvent = function(evt) {
     var condition = $scope.$parent.getActiveCondition();

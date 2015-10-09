@@ -1,6 +1,6 @@
 GameEditor.controllers.controller('TimeTriggerCtrl', ['$scope', '$http', function ($scope, $http) {
   $scope.done = $scope.$parent.doneTriggerSet;
-  $scope.TimeTriggerType = TimeTrigger.TriggerType;
+  $scope.TimeTriggerType = GE.TimeTrigger.TriggerType;
 
   $scope.setTimeTriggerType = function(type) {
     var condition = $scope.$parent.getActiveCondition();

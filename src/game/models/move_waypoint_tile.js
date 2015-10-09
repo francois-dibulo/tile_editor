@@ -16,7 +16,7 @@ var MoveWaypointTile = function(options) {
     y: 1
   };
   this.move_offset = this.size.width / 2;
-  this.on(Entity.Event.onCreate, this.initQueue.bind(this));
+  this.on(GE.Entity.Event.onCreate, this.initQueue.bind(this));
 };
 
 MoveWaypointTile.MoveType = {
@@ -124,7 +124,7 @@ MoveWaypointTile.prototype.workNextWaypoint = function() {
 };
 
 MoveWaypointTile.prototype.updateTilePosition = function() {
-  var current_sprite_pos = this.graphic.position;
+  var current_sprite_pos = this.graphic_objects[0].position;
   var current_sprite_x = current_sprite_pos.x;
   var current_sprite_y = current_sprite_pos.y;
   var x = this.position.x;
@@ -141,7 +141,7 @@ MoveWaypointTile.prototype.updateTilePosition = function() {
 };
 
 MoveWaypointTile.prototype.move = function() {
-  var pos = this.graphic.position;
+  var pos = this.graphic_objects[0].position;
   var target = this.current_target_point;
   if (target) {
     var next_x = pos.x;
@@ -163,7 +163,7 @@ MoveWaypointTile.prototype.move = function() {
       var wait = parseInt(target.wait, 10) || 0
       this.queue.add('workNextWaypoint', wait);
     } else {
-      this.graphic.setPosition(next_x, next_y);
+      this.callMethodOnGraphics('setPosition', next_x, next_y);
     }
   }
   this.updateTilePosition();

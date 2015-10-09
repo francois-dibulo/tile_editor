@@ -23,7 +23,7 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
   $scope.current_inspect_entity = null;
   $scope.after_select_object_fn = null;
   //
-  $scope.onTriggerEvents = Entity.Event;
+  $scope.onTriggerEvents = GE.Entity.Event;
   //
   var game = null;
   var render_layer_0 = null;
@@ -78,29 +78,29 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
       {
         class_name: 'WallTile',
         opts: {
-          graphics: {
-            type: PixiGraphic.Type.Rectangle,
+          graphics: [{
+            type: GE.PixiGraphic.Type.Rectangle,
             fill_color: 0x34495e
-          }
+          }]
         }
       },
       {
         class_name: 'FloorTile',
         opts: {
-          graphics: {
-            type: PixiGraphic.Type.Rectangle,
+          graphics: [{
+            type: GE.PixiGraphic.Type.Rectangle,
             fill_color: 0xecf0f1
-          }
+          }]
         },
         is_unique: true
       },
       {
         class_name: 'SpawnTile',
         opts: {
-          graphics: {
-            type: PixiGraphic.Type.Rectangle,
+          graphics: [{
+            type: GE.PixiGraphic.Type.Rectangle,
             fill_color: 0x16a085
-          }
+          }]
         },
         is_unique: true
       },
@@ -108,19 +108,19 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
         class_name: 'EndTile',
         is_unique: true,
         opts: {
-          graphics: {
-            type: PixiGraphic.Type.Rectangle,
+          graphics: [{
+            type: GE.PixiGraphic.Type.Rectangle,
             fill_color: 0x2ecc71
-          }
+          }]
         }
       },
       {
         class_name: 'EnemyTile',
         opts: {
-          graphics: {
-            type: PixiGraphic.Type.Rectangle,
+          graphics: [{
+            type: GE.PixiGraphic.Type.Rectangle,
             fill_color: 0xe74c3c
-          }
+          }]
         },
         tools: {
           set_waypoint: true
@@ -291,7 +291,10 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     entity.active_trigger = null;
     entity.createGraphic();
 
-    render_layer.addGraphic(entity.graphic.getGraphicObj());
+    for (var i = 0; i < entity.graphic_objects.length; i++) {
+      var g = entity.graphic_objects[i].getGraphicObj();
+      render_layer.addGraphic(g);
+    };
 
     // Trigger on-remove-event
     entity.on('moved', function() {

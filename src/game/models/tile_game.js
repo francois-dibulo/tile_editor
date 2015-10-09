@@ -1,9 +1,9 @@
 var PixiTileGame = function(world) {
-  Game.apply(this, arguments);
+  GE.PixiGame.apply(this, arguments);
   this.cells = [];
 };
 
-PixiTileGame.prototype = new PixiGame();
+PixiTileGame.prototype = new GE.PixiGame();
 
 PixiTileGame.prototype.prebuildCells = function(cols, rows) {
   this.cells = [];

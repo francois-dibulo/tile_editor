@@ -5,7 +5,7 @@ var TileEntity = function(options) {
   this.col = 0;
   this.is_walkable = true;
   this.trigger_conditions = [];
-  MoveEntity.apply(this, arguments);
+  GE.MoveEntity.apply(this, arguments);
   this.type = 'TileEntity';
   this.init_cell = {
     row: this.row,
@@ -17,7 +17,7 @@ var TileEntity = function(options) {
   };
 };
 
-TileEntity.prototype = new MoveEntity();
+TileEntity.prototype = new GE.MoveEntity();
 
 TileEntity.prototype.reset = function() {
   this.setTilePosition(this.init_cell.row, this.init_cell.col, true);
@@ -33,7 +33,7 @@ TileEntity.prototype.setTilePosition = function(row, col, set_sprite) {
   this.position.x = this.col * this.size.width;
   this.position.y = this.row * this.size.height;
   if (set_sprite) {
-    this.graphic.setPosition(this.position.x, this.position.y);
+    this.setPosition(this.position.x, this.position.y);
   }
   this.emit('moved');
 };
