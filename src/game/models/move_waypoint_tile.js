@@ -16,7 +16,7 @@ var MoveWaypointTile = function(options) {
     y: 1
   };
   this.move_offset = this.size.width / 2;
-  this.on(GE.Entity.Event.onCreate, this.initQueue.bind(this));
+  //this.on(GE.Entity.Event.onCreate, this.initQueue.bind(this));
 };
 
 MoveWaypointTile.MoveType = {

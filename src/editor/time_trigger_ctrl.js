@@ -1,5 +1,11 @@
 GameEditor.controllers.controller('TimeTriggerCtrl', ['$scope', '$http', function ($scope, $http) {
-  $scope.done = $scope.$parent.doneTriggerSet;
+  $scope.done = function() {
+    var condition = $scope.$parent.getActiveCondition();
+    for (var i = 0; i < condition.trigger_at.length; i++) {
+      condition.trigger_at[i] = parseInt(condition.trigger_at[i], 10);
+    }
+    $scope.$parent.doneTriggerSet();
+  };
   $scope.TimeTriggerType = GE.TimeTrigger.TriggerType;
 
   $scope.setTimeTriggerType = function(type) {
@@ -28,6 +34,6 @@ GameEditor.controllers.controller('TimeTriggerCtrl', ['$scope', '$http', functio
   $scope.updateTriggetAtValue = function(index, value) {
     console.log(index, value);
     var condition = $scope.$parent.getActiveCondition();
-    condition.trigger_at[index] = value;
+    condition.trigger_at[index] = parseInt(value);
   };
 }]);

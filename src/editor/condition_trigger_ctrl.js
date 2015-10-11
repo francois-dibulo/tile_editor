@@ -1,5 +1,9 @@
 GameEditor.controllers.controller('CollisionTriggerCtrl', ['$scope', '$http', function ($scope, $http) {
-  $scope.done = $scope.$parent.doneTriggerSet;
+  $scope.done = function() {
+    var condition = $scope.$parent.getActiveCondition();
+    condition.collision_type = GE.Entity.Event.onCollision;
+    $scope.$parent.doneTriggerSet();
+  };
   $scope.show_info_select_object = false;
   $scope.show_info_select_cell = false;
   $scope.is_entity_type = false;

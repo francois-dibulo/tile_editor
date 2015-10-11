@@ -43,9 +43,62 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     render();
   };
 
+  // Apply all set triggers
+  $scope.applyTrigger = function() {
+    game.loopEntities(function(entity) {
+      var triggers = entity.trigger_conditions;
+      for (var i = 0; i < triggers.length; i++) {
+        var t = triggers[i];
+        var actions = t.actions;
+        var conditions = t.conditions;
+        console.log(actions, conditions);
+
+        // Add conditions
+        for (var c = 0; c < conditions.length; c++) {
+          var t_group = new GE.TriggerGroup();
+          var condition_data = conditions[c];
+          var condition = new GE[condition_data.class_name](condition_data);
+          // Add actions fn only to first condition in the trigger group
+          if (c === 0) {
+
+            // Add actions
+            for (var a = 0; a < actions.length; a++) {
+              var action_data = actions[a];
+              var obj = action_data.action_object;
+
+              // Action is Move
+              if (action_data.class_name === "Move") {
+                // Add waypoints
+                for (var w = 0; w < action_data.waypoint_queue.length; w++) {
+                  obj.addWaypoint(action_data.waypoint_queue[w]);
+                }
+                obj.move_type = action_data.wp_move_type;
+                condition.addActionFunction(obj['initQueue'].bind(obj));
+              } else {
+                for (var f = 0; f < action_data.action_fns.length; f++) {
+                  var fn = action_data.action_fns[f];
+                  condition.addActionFunction(obj[fn].bind(obj));
+                }
+              }
+
+            }
+          }
+          t_group.addCondition(condition);
+          if (condition_data.class_name === "ObjectEventTrigger") {
+            condition_data.listener_object.addTrigger(t_group);
+          } else {
+            entity.addTrigger(t_group);
+          }
+        }
+      }
+      entity.dirty = true;
+    });
+  };
+
   $scope.togglePlay = function() {
     if (!game.is_running) {
       grid.hide();
+      $scope.applyTrigger();
       game.start();
     } else {
       grid.show();
@@ -138,6 +191,11 @@ GameEditor.controllers.controller('EditorCtrl', ['$scope', '$http', function ($s
     }
     game.loopEntities(function(entity) {
       entity.reset();
+      if (entity.dirty) {
+        entity.triggers = [];
+        entity.show();
+        entity.dirty = false;
+      }
     });
     render();
   };

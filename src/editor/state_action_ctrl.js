@@ -6,7 +6,7 @@ GameEditor.controllers.controller('StateActionCtrl', ['$scope', '$http', functio
 
   $scope.addEvent = function(evt) {
     var condition = $scope.$parent.getActiveCondition();
-    condition.evt = evt;
+    condition.evt = GE.Entity.Event[evt];
     condition.labels.evt = ' triggers ' + evt;
   };
 
